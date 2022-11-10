@@ -1,5 +1,9 @@
 import styled from "@emotion/styled";
 import colors from "../../styles/colors";
+import { index_articles } from "../../article_services";
+import { useState, useEffect } from "react";
+import { debounce } from "lodash";
+import { AiFillCheckCircle, AiFillCloseCircle } from "react-icons/ai";
 
 const DivContainer = styled.div`
   display: flex;
@@ -13,12 +17,12 @@ const DivContainer = styled.div`
 `;
 const FirstLineDiv = styled.div`
   display: flex;
-  gap: 4rem;
+  gap: 1rem;
 `;
 const SkuContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 4.5rem;
+  gap: 3rem;
   font-size: 12px;
   align-items: center;
 `;
@@ -66,7 +70,7 @@ const DepaDiv = styled.div`
   align-items: center;
 `;
 
-const DepaInput = styled.input`
+const DepaInput = styled.select`
   border-color: 2px solid ${colors.black};
   border-width: 1px;
   width: 16rem;
@@ -125,12 +129,79 @@ const SubmitButton = styled.button`
 `;
 
 export function InterfaceAlta() {
+  const [dataArticle, setDataArticle] = useState([]);
+  const [dataFilter, setDataFilter] = useState({
+    sku: "",
+    articulo: "",
+    marca: "",
+    modelo: "",
+    alta: "",
+    stock: "",
+    cantidad: "",
+    descontinuado: "",
+    baja: "",
+  });
+  const [dataInput, setDataInput] = useState("");
+
+  const [valorEncontrado, setValorEncontrado] = useState(false);
+
+  useEffect(() => {
+    index_articles()
+      .then((data) => setDataArticle(data))
+      .catch((errors) => console.log(errors));
+  }, []);
+
+  function handle_change(event) {
+    const exist = event.target.value;
+    setDataInput(exist);
+    debounceInput(exist, 1000);
+  }
+
+  function handle_change_on_sku(event) {
+    const exist = event.target.value;
+    setDataInput(exist);
+    debounceInput(exist, 1000);
+  }
+  const debounceInput = debounce((input) => {
+    const dataEncontrada = dataArticle.filter((e) => e.sku === parseInt(input));
+    if (dataEncontrada.length === 0) {
+      setValorEncontrado(false);
+    } else {
+      setDataFilter({
+        sku: dataEncontrada[0].sku,
+        articulo: dataEncontrada[0].articulo,
+        marca: dataEncontrada[0].marca,
+        modelo: dataEncontrada[0].modelo,
+        alta: dataEncontrada[0].alta,
+        stock: dataEncontrada[0].stock,
+        cantidad: dataEncontrada[0].cantidad,
+        descontinuado: dataEncontrada[0].descontinuado,
+        baja: dataEncontrada[0].baja,
+      });
+
+      setValorEncontrado(true);
+    }
+  }, 1000);
+
   return (
     <DivContainer>
       <FirstLineDiv>
         <SkuContainer>
           Sku:
-          <SmallInput id="sku" placeholder="Only Numbers" />
+          <SmallInput
+            id="sku"
+            onChange={handle_change}
+            placeholder="Only Numbers"
+          />
+          {valorEncontrado ? (
+            <AiFillCheckCircle
+              style={{ color: "green", width: "24px", height: "24px" }}
+            />
+          ) : (
+            <AiFillCloseCircle
+              style={{ color: "red", width: "24px", height: "24px" }}
+            />
+          )}
         </SkuContainer>
         <DescontinuadoDivContainer>
           <input type="checkbox" name="Descontinuado" />
@@ -142,16 +213,28 @@ export function InterfaceAlta() {
         <LargeInput
           id="Articulo"
           type="text"
+          onChange={handle_change_on_sku}
+          value={dataFilter.articulo}
           placeholder="Ingresa el nombre del Artículo"
         />
       </AmDiv>
       <MDiv>
         Marca:
-        <LargeInput id="Marca" type="text" placeholder="Ingresa la Marca" />
+        <LargeInput
+          id="Marca"
+          type="text"
+          placeholder="Ingresa la Marca"
+          value={dataFilter.marca}
+        />
       </MDiv>
       <AmDiv>
         Modelo:
-        <LargeInput id="Modelo" type="text" placeholder="Ingresa el Modelo" />
+        <LargeInput
+          id="Modelo"
+          type="text"
+          placeholder="Ingresa el Modelo"
+          value={dataFilter.modelo}
+        />
       </AmDiv>
       <DepaDiv>
         Departamento:
@@ -175,24 +258,36 @@ export function InterfaceAlta() {
       </AmDiv>
       <StockQuantityContainer>
         <StockContainer>
-          Stock: <SmallInput id="Stock" placeholder="En stock" />{" "}
+          Stock:{" "}
+          <SmallInput
+            id="Stock"
+            placeholder="En stock"
+            value={dataFilter.stock}
+          />{" "}
         </StockContainer>
         <QuantityContainer>
-          Cantidad: <SmallInput id="Cantidad" placeholder="Cantidad" />
+          Cantidad:{" "}
+          <SmallInput
+            id="Cantidad"
+            placeholder="Cantidad"
+            value={dataFilter.cantidad}
+          />
         </QuantityContainer>
       </StockQuantityContainer>
       <DateContaier>
         <FechaAltaDiv>
-          Fecha Alta <SmallInput id="FechaDeAlta" type="date" />
+          Fecha Alta{" "}
+          <SmallInput id="FechaDeAlta" type="date" value={dataFilter.alta} />
         </FechaAltaDiv>
         <FechaBajaDiv>
-          Fecha Baja <SmallInput id="FechaDeBaja" type="date" />
+          Fecha Baja{" "}
+          <SmallInput id="FechaDeBaja" type="date" value={dataFilter.baja} />
         </FechaBajaDiv>
       </DateContaier>
 
       <SubmitButtonDiv>
         Alta
-        <SubmitButton>Search</SubmitButton>
+        <SubmitButton>Create</SubmitButton>
       </SubmitButtonDiv>
     </DivContainer>
   );

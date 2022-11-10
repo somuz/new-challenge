@@ -25,8 +25,7 @@ export const StyledButton = styled.button`
   background-color: ${colors.white};
   cursor: pointer;
 `;
-
-export function NabvarForm() {
+function NabvarForm() {
   return (
     <StyledNavBar>
       <Link to="/InterfaceAlta">
