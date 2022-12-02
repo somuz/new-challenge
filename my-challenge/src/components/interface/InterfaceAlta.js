@@ -130,6 +130,7 @@ const SubmitButton = styled.button`
 
 export function InterfaceAlta() {
   const [dataArticle, setDataArticle] = useState([]);
+
   const [dataFilter, setDataFilter] = useState({
     sku: "",
     articulo: "",
@@ -150,6 +151,19 @@ export function InterfaceAlta() {
       .then((data) => setDataArticle(data))
       .catch((errors) => console.log(errors));
   }, []);
+  /*
+  function handle_department_change(event) {
+    const compare = event.target.value;
+    setDataDepartment(compare);
+    if (dataDepartment) {
+    }
+  }
+ */
+
+  function handle_class(event) {
+    const exist = event.target.value;
+    setDataInput(exist);
+  }
 
   function handle_change(event) {
     const exist = event.target.value;
@@ -177,6 +191,9 @@ export function InterfaceAlta() {
         cantidad: dataEncontrada[0].cantidad,
         descontinuado: dataEncontrada[0].descontinuado,
         baja: dataEncontrada[0].baja,
+        departamento: dataEncontrada[0].department,
+        clase: dataEncontrada[0].clase,
+        familia: dataEncontrada[0].family,
       });
 
       setValorEncontrado(true);
@@ -242,19 +259,35 @@ export function InterfaceAlta() {
           id="Departamento"
           type="number"
           placeholder="Ingresa el Departamento"
-        />
+        >
+          <option></option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+        </DepaInput>
       </DepaDiv>
       <MDiv>
         Clase :{" "}
-        <LargeInput id="Clase" type="number" placeholder="Ingresa la Clase" />
+        <DepaInput id="Clase" type="number" placeholder="Ingresa la Clase">
+          <option></option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+        </DepaInput>
       </MDiv>
       <AmDiv>
         Familia:{" "}
-        <LargeInput
-          id="Familia"
-          type="number"
-          placeholder="Ingresa la Familia"
-        />
+        <DepaInput id="Familia" type="number" placeholder="Ingresa la Familia">
+          <option></option>
+          <option>1</option>
+          <option>2</option>
+          <option>3</option>
+          <option>4</option>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+        </DepaInput>
       </AmDiv>
       <StockQuantityContainer>
         <StockContainer>

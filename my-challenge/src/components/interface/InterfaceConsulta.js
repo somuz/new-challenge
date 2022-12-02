@@ -141,7 +141,7 @@ export function InterfaceConsulta() {
     baja: "",
   });
   const [dataInput, setDataInput] = useState("");
-
+  console.log(dataInput);
   const [valorEncontrado, setValorEncontrado] = useState(false);
 
   useEffect(() => {
